@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/sanjbh/vue-api/internal/data"
 )
 
 func (app *application) routes() http.Handler {
@@ -21,6 +22,17 @@ func (app *application) routes() http.Handler {
 	}))
 
 	mux.Get("/users/login", app.Login)
+	mux.Post("/users/login", app.Login)
+	mux.Get("/users/all", func(w http.ResponseWriter, r *http.Request) {
+		var user data.User
+		all, err := user.GetAll()
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+		app.writeJson(w, http.StatusOK, all)
+
+	})
 
 	return mux
 }
